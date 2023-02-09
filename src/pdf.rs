@@ -9,6 +9,13 @@ use crate::MergeRequest;
 
 pub fn merge(documents: Vec<Document>) -> Result<Document, ErrorKind> {
 
+    // If no "Pages" found abort
+    if documents.is_empty() {
+        println!("No documents");
+
+        return Err(ErrorKind::InvalidInput);
+    }
+
     // This code comes from the getting started, I've just changed the signature
     // to return the Document instead of saving to a local file
 

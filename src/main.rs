@@ -1,6 +1,6 @@
 use std::fmt::{Debug, Display};
 use std::io::ErrorKind;
-
+use std::ops::Deref;
 use base64::{alphabet, DecodeError, Engine as _, engine::{self, general_purpose}};
 use lambda_http::{Body, Error, Request, RequestExt, Response, run, service_fn};
 use lopdf::Document;
@@ -9,7 +9,7 @@ use tracing_subscriber::fmt::format;
 
 mod pdf;
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone, Default)]
 pub struct MergeRequest {
     files: Vec<String>
 }
@@ -32,9 +32,9 @@ pub fn str_to_vec(input_b64: &str) -> Result<Vec<u8>, DecodeError> {
 /// - https://github.com/awslabs/aws-lambda-rust-runtime/tree/main/examples
 async fn function_handler(event: Request) -> Result<Response<Body>, Error> {
     // Extract some useful information from the request
-    let merge = event.payload::<MergeRequest>();
+    let merge = event.payload::<MergeRequest>()?;
 
-    if merge.is_err(){
+    if merge.is_none(){
         let resp = Response::builder()
             .status(400)
             .header("content-type", "application/json")
@@ -48,7 +48,7 @@ async fn function_handler(event: Request) -> Result<Response<Body>, Error> {
 
 
     // base 64 strings into vector of Document
-    let docs = merge.unwrap().unwrap().files.iter()
+    let docs = merge.unwrap().files.iter()
         .map(|s| str_to_vec(s.as_str()))
         .filter(|v| v.is_ok())
         .map(|s| Document::load_mem(s.unwrap().as_slice()).unwrap())
@@ -76,13 +76,10 @@ async fn function_handler(event: Request) -> Result<Response<Body>, Error> {
         return Ok(resp);
     }
 
-
 }
 
 #[tokio::main]
 async fn main() -> Result<(), Error> {
-
-    //pdf::main();
 
     tracing_subscriber::fmt()
         .with_max_level(tracing::Level::INFO)
