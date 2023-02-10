@@ -1,4 +1,6 @@
-# lambda-pdf-merge
+# lambda-pdf-merge  
+
+[![Rust](https://github.com/giufus/lambda-pdf-merge/actions/workflows/rust.yml/badge.svg)](https://github.com/giufus/lambda-pdf-merge/actions/workflows/rust.yml)  
 
 An attempt to create a REST api using an AWS lambda function and the Rust runtime - easy peasy with [Cargo Lambda](https://www.cargo-lambda.info/) and [lopdf](https://github.com/J-F-Liu/lopdf).  
 

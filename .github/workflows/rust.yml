@@ -20,12 +20,3 @@ jobs:
       run: cargo build --verbose
     - name: Run tests
       run: cargo test --verbose
-    - name: Rust Codecov
-      # You may pin to the exact commit or the version.
-      # uses: maboesanman/rust-codecov@59ce25a11e3e218f11e607909cfa7a48f6d926c5
-      uses: maboesanman/rust-codecov@v0
-      #with:
-        # the destination file path
-        # output-path: # optional, default is codecov.json
-        # pattern to exclude from coverage
-        # ignore-pattern: # optional, default is (.*\.cargo/registry/.*)|(.*\.rustup/.*)|(.*test.*)
