@@ -1,6 +1,6 @@
 # lambda-pdf-merge
 
-An attempt to create a REST api using an AWS lambda function and the Rust runtime - easy peasy with [Cargo Lambda](https://www.cargo-lambda.info/).  
+An attempt to create a REST api using an AWS lambda function and the Rust runtime - easy peasy with [Cargo Lambda](https://www.cargo-lambda.info/) and [lopdf](https://github.com/J-F-Liu/lopdf).  
 
 Your request is an `"application/json"` with a list of pdf files as base64 strings 
 ```
