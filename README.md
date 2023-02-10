@@ -1,21 +1,28 @@
-## lambda-pdf-merge
+# lambda-pdf-merge
 
-An attempt to create an aws lambda function with the fastest runtime available (currently Rust) using [Cargo Lambda](https://www.cargo-lambda.info/).  
+An attempt to create a REST api using an AWS lambda function and the Rust runtime - easy peasy with [Cargo Lambda](https://www.cargo-lambda.info/).  
+
 Your request is an `"application/json"` with a list of pdf files as base64 strings 
 ```
 {
     "files" : [ "samplebase64string1", "samplebase64string2" ] 
 }
 ```
-and the response is a single `"application/pdf"` file containing the merge of the inputs.
+and the response is a binary file containing the merge of the inputs.  
 
-### Requirements
-Install everything reading the Cargo Lambda getting started, then:
+### Requirements  
+Install everything, RTFM of Cargo Lambda project, then:  
 
-### Run the server
-`cargo lambda watch`
+### Run the server locally  
+`cargo lambda watch`  
 
-### Get the file
+### Or deploy to your AWS account  
+`TO DO`  
+
+### A little bit of DevOps   
+`TO DO`  
+
+### And we are done: now get the file  
 `
 curl --location --request POST 'http://localhost:9000/lambda-url/lambda-pdf-merge/' \
 --header 'Content-Type: application/json' \
@@ -27,5 +34,5 @@ curl --location --request POST 'http://localhost:9000/lambda-url/lambda-pdf-merg
 }'
 `
 
-If it works, we can build and deploy it on your AWS account (you must have aws credentials configured in your system).
+
 
