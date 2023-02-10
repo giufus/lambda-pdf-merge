@@ -1,5 +1,4 @@
 use std::collections::BTreeMap;
-use std::io::ErrorKind;
 
 use base64::DecodeError;
 use base64::engine::general_purpose;
@@ -12,7 +11,7 @@ pub struct MergeRequest {
 }
 
 impl MergeRequest {
-    pub fn new(files: Vec<String>) -> Self {
+    fn new(files: Vec<String>) -> Self {
         Self { files }
     }
 }
@@ -233,9 +232,9 @@ mod tests {
 
     #[test]
     fn get_merged_with_bad_list_input() {
-        assert!(get_merged(MergeRequest {
-            files: vec![String::from("foo"), String::from("bar")]
-        }).is_err());
+        assert!(get_merged(
+            MergeRequest::new(vec![String::from("foo"), String::from("bar")])
+        ).is_err());
     }
 
     #[test]

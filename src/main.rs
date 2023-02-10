@@ -1,12 +1,6 @@
 extern crate core;
-
-use std::io::ErrorKind;
-
 use lambda_http::{Body, Error, Request, RequestExt, Response, run, service_fn};
-use lambda_http::ext::PayloadError;
-
 use crate::pdf::MergeRequest;
-
 mod pdf;
 
 pub fn default_error_response(message: Option<&str>, code: u16) -> Response<Body> {
@@ -50,7 +44,7 @@ async fn function_handler(event: Request) -> Result<Response<Body>, Error> {
             }
         }
 
-        Err(e) => Ok(default_error_response(Some("invalid payload format"), 400))
+        Err(_) => Ok(default_error_response(Some("invalid payload format"), 400))
     }
 }
 
