@@ -1,19 +1,27 @@
 use std::collections::BTreeMap;
 use std::io::ErrorKind;
-use lopdf::{Bookmark, Document, Object, ObjectId, Stream};
-use lopdf::content::{Content, Operation};
-use lopdf::dictionary;
-use tokio::main;
 
-use crate::MergeRequest;
+use base64::DecodeError;
+use base64::engine::general_purpose;
+use lopdf::{Bookmark, Document, Object, ObjectId};
+use serde::{Deserialize, Serialize};
 
-pub fn merge(documents: Vec<Document>) -> Result<Document, ErrorKind> {
+#[derive(Serialize, Deserialize, Debug, Clone, Default)]
+pub struct MergeRequest {
+    files: Vec<String>,
+}
+
+impl MergeRequest {
+    pub fn new(files: Vec<String>) -> Self {
+        Self { files }
+    }
+}
+
+fn merge(documents: Vec<Document>) -> Result<Document, String> {
 
     // If no "Pages" found abort
     if documents.is_empty() {
-        println!("No documents");
-
-        return Err(ErrorKind::InvalidInput);
+        return Err(String::from("empty file list"));
     }
 
     // This code comes from the getting started, I've just changed the signature
@@ -107,9 +115,7 @@ pub fn merge(documents: Vec<Document>) -> Result<Document, ErrorKind> {
 
     // If no "Pages" found abort
     if pages_object.is_none() {
-        println!("Pages root not found.");
-
-        return Err(ErrorKind::InvalidInput);
+        return Err(String::from("root page not found"));
     }
 
     // Iter over all "Page" and collect with the parent "Pages" created before
@@ -126,9 +132,7 @@ pub fn merge(documents: Vec<Document>) -> Result<Document, ErrorKind> {
 
     // If no "Catalog" found abort
     if catalog_object.is_none() {
-        println!("Catalog root not found.");
-
-        return Err(ErrorKind::InvalidInput);
+        return Err(String::from("root catalog not found"));
     }
 
     let catalog_object = catalog_object.unwrap();
@@ -188,5 +192,57 @@ pub fn merge(documents: Vec<Document>) -> Result<Document, ErrorKind> {
 
     document.compress();
     Ok(document)
+}
+
+fn str_to_vec(input_b64: &str) -> Result<Vec<u8>, DecodeError> {
+    use base64::Engine;
+    general_purpose::STANDARD.decode(input_b64)
+}
+
+pub fn get_merged(merge_request: MergeRequest) -> Result<Vec<u8>, String> {
+    let mut merge_bytes = Vec::new();
+    let merge_result: Result<Document, String>;
+
+    let docs: Vec<Document> = merge_request.files.iter()
+        .map(|s| str_to_vec(s.as_str()))
+        .filter(|v| v.is_ok())
+        .map(|s| Document::load_mem(s.unwrap().as_slice()))
+        .filter(|v| v.is_ok())
+        .map(|v| v.unwrap())
+        .collect::<Vec<Document>>();
+
+    merge_result = merge(docs);
+
+    if merge_result.is_ok() {
+        merge_result.unwrap().save_to(&mut merge_bytes);
+        Ok(merge_bytes)
+    } else {
+        Err(merge_result.unwrap_err())
+    }
+}
+
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn get_merged_with_empty_list_input() {
+        assert!(get_merged(MergeRequest::default()).is_err());
+    }
+
+    #[test]
+    fn get_merged_with_bad_list_input() {
+        assert!(get_merged(MergeRequest {
+            files: vec![String::from("foo"), String::from("bar")]
+        }).is_err());
+    }
+
+    #[test]
+    fn get_merged_with_good_list_input() {
+        let payload = include_str!("test/payload.json");
+        let merge_request: MergeRequest = serde_json::from_str(payload).unwrap();
+        assert!(get_merged(merge_request).is_ok());
+    }
 }
 
