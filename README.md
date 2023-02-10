@@ -1,4 +1,4 @@
-# lambda-pdf-merge  
+# lambda-pdf-merge 🦀 
 
 [![Rust](https://github.com/giufus/lambda-pdf-merge/actions/workflows/rust.yml/badge.svg)](https://github.com/giufus/lambda-pdf-merge/actions/workflows/rust.yml)  
 
