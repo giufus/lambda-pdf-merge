@@ -18,17 +18,23 @@ Install everything, RTFM of Cargo Lambda project, then:
 ### Run the server locally  
 `cargo lambda watch`  
 
-### Build your lambda   
-`cargo lambda build --release --arm64`  
 
-### Deploy it to your AWS account  
-`cargo lambda deploy`  
+### Or deploy it to your AWS account with a little bit of DevOps   
+```
+ cd iaas
+ terraform init (only 1st time)
+ terraform workspace new dev (only 1st time)
+ 
+ terraform workspace select dev 
+ terraform plan -out plan.out (a dry-run)
+ terraform apply plan.out
+```
+Delete everything with
+```
+ terraform destroy
+```
 
-### A little bit of DevOps   
-If you want to use it, through Api Gateway, run: 
-`TO DO`  
-
-### And we are done: now get the file  
+### And we are done: now get the file (pointing to localhost or to the api gateway invoke url)  
 `
 curl --location --request POST 'http://localhost:9000/lambda-url/lambda-pdf-merge/' \
 --header 'Content-Type: application/json' \

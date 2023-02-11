@@ -1,2 +1,6 @@
 /target
 .idea/
+*.iml
+.terraform*
+terraform.tfstate.d
+plan.out
