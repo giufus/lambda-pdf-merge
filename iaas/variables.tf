@@ -12,5 +12,11 @@ variable "region" {
   default = "us-east-1"
 }
 
+#API enabled
+variable "default_endpoint_disabled" {
+  type = bool
+  default = true
+}
+
 
 

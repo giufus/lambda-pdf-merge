@@ -22,11 +22,17 @@ Install everything, RTFM of Cargo Lambda project, then:
 ### Or deploy it to your AWS account with a little bit of DevOps   
 ```
  cd iaas
- terraform init (only 1st time)
- terraform workspace new dev (only 1st time)
+ 
+ # only 1st time
+ terraform init 
+ terraform workspace new dev 
  
  terraform workspace select dev 
- terraform plan -out plan.out (a dry-run)
+ 
+ # a dry-run (endpoint disabled by default)
+ terraform plan -out plan.out --var-file="environments/dev/variables.tfvars" --var="default_endpoint_disabled=true"
+ 
+ # apply it
  terraform apply plan.out
 ```
 Delete everything with

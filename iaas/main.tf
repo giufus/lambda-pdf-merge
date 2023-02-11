@@ -97,6 +97,7 @@ resource "aws_apigatewayv2_api" "api" {
   name          = "${terraform.workspace}_api-pdf-merge"
   protocol_type = "HTTP"
   target        = aws_lambda_function.lambda_function.arn
+  disable_execute_api_endpoint = var.default_endpoint_disabled
 }
 
 # Permission
