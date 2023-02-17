@@ -1,3 +1,4 @@
+use std::borrow::BorrowMut;
 use std::collections::BTreeMap;
 
 use base64::DecodeError;
@@ -198,7 +199,7 @@ fn str_to_vec(input_b64: &str) -> Result<Vec<u8>, DecodeError> {
     general_purpose::STANDARD.decode(input_b64)
 }
 
-pub fn get_merged(merge_request: MergeRequest) -> Result<Vec<u8>, String> {
+pub fn build(merge_request: MergeRequest) -> Result<Vec<u8>, String> {
     let mut merge_bytes = Vec::new();
     let merge_result: Result<Document, String>;
 
@@ -212,11 +213,14 @@ pub fn get_merged(merge_request: MergeRequest) -> Result<Vec<u8>, String> {
 
     merge_result = merge(docs);
 
-    if merge_result.is_ok() {
-        merge_result.unwrap().save_to(&mut merge_bytes);
-        Ok(merge_bytes)
-    } else {
-        Err(merge_result.unwrap_err())
+    match merge_result {
+        Ok(mut mr) => {
+            mr.save_to(&mut merge_bytes);
+            Ok(merge_bytes)
+        }
+        Err(er) => {
+            Err(er)
+        }
     }
 }
 
@@ -227,12 +231,12 @@ mod tests {
 
     #[test]
     fn get_merged_with_empty_list_input() {
-        assert!(get_merged(MergeRequest::default()).is_err());
+        assert!(build(MergeRequest::default()).is_err());
     }
 
     #[test]
     fn get_merged_with_bad_list_input() {
-        assert!(get_merged(
+        assert!(build(
             MergeRequest::new(vec![String::from("foo"), String::from("bar")])
         ).is_err());
     }
@@ -241,7 +245,7 @@ mod tests {
     fn get_merged_with_good_list_input() {
         let payload = include_str!("test/payload.json");
         let merge_request: MergeRequest = serde_json::from_str(payload).unwrap();
-        assert!(get_merged(merge_request).is_ok());
+        assert!(build(merge_request).is_ok());
     }
 }
 

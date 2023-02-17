@@ -18,8 +18,10 @@ Install everything, RTFM of Cargo Lambda project, then:
 ### Run the server locally  
 `cargo lambda watch`  
 
+### Build tha lambda package  
+`cargo lambda build --release --arm64 --output-format zip`
 
-### Or deploy it to your AWS account with a little bit of DevOps   
+### Then deploy it to your AWS account with a little bit of DevOps   
 ```
  cd iaas
  

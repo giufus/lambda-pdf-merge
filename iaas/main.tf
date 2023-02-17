@@ -16,15 +16,6 @@ provider "aws" {
   region = var.region
 }
 
-resource "random_pet" "lambda_random_name" {
-  prefix = var.service_name
-  length = 4
-
-  provisioner "local-exec" {
-    command = "cd ..; cargo lambda build --release --arm64 --output-format zip"
-  }
-}
-
 resource "aws_iam_role" "iam_for_lambda" {
   name = "iam_for_lambda-${terraform.workspace}-${var.service_name}"
 

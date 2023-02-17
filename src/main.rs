@@ -26,7 +26,7 @@ async fn function_handler(event: Request) -> Result<Response<Body>, Error> {
                 }
                 Some(m) => {
                     // get bytes, OK response
-                    let merge_bytes: Result<Vec<u8>, String> = pdf::get_merged(m);
+                    let merge_bytes: Result<Vec<u8>, String> = pdf::build(m);
                     match merge_bytes {
                         Ok(b) => {
                             let resp = Response::builder()
